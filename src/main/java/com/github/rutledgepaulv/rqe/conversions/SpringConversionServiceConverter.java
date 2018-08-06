@@ -10,10 +10,7 @@
 
 package com.github.rutledgepaulv.rqe.conversions;
 
-import com.github.rutledgepaulv.rqe.conversions.parsers.LocalDateConverter;
-import com.github.rutledgepaulv.rqe.conversions.parsers.LocalDateTimeConverter;
-import com.github.rutledgepaulv.rqe.conversions.parsers.StringToInstantConverter;
-import com.github.rutledgepaulv.rqe.conversions.parsers.StringToObjectBestEffortConverter;
+import com.github.rutledgepaulv.rqe.conversions.parsers.*;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
 
@@ -27,6 +24,7 @@ public class SpringConversionServiceConverter implements StringToTypeConverter {
         conversions.addConverter(new StringToObjectBestEffortConverter());
         conversions.addConverter(new LocalDateConverter("yyyy-MM-dd"));
         conversions.addConverter(new LocalDateTimeConverter("yyyy-MM-dd HH:mm:ss"));
+        conversions.addConverterFactory(new StringToEnumConverterFactory());
         this.conversionService = conversions;
     }
 
