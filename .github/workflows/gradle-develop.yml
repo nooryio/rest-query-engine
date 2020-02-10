@@ -1,4 +1,4 @@
-name: REST develop Build
+name: REST Query Engine develop Build
 
 on:
   push:
