@@ -32,13 +32,16 @@ public class StandardFieldTest extends TestBase {
 
         assertNotPredicate(condition, new User().setFirstName("Joe"));
 
-        assertMongo(condition, "{ \"firstName\" : \"Paul\"}");
+        assertMongo(condition, "{\"firstName\": \"Paul\"}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"firstName\" : \"Paul\"\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"firstName\" : {\n" +
+            "      \"value\" : \"Paul\",\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
     }
 
 
@@ -51,16 +54,18 @@ public class StandardFieldTest extends TestBase {
 
         assertNotPredicate(condition1, new User().setFirstName("Joe"));
 
-        assertMongo(condition1, "{ \"firstName\" : { \"$regex\" : \".*Paul$\"}}");
+        assertMongo(condition1, "{\"firstName\": {\"$regex\": \".*Paul$\", \"$options\": \"\"}}");
 
         assertElasticsearch(condition1, "{\n" +
-                "  \"regexp\" : {\n" +
-                "    \"firstName\" : {\n" +
-                "      \"value\" : \".*Paul$\",\n" +
-                "      \"flags_value\" : 65535\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
+            "  \"regexp\" : {\n" +
+            "    \"firstName\" : {\n" +
+            "      \"value\" : \".*Paul$\",\n" +
+            "      \"flags_value\" : 65535,\n" +
+            "      \"max_determinized_states\" : 10000,\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
     }
 
     @Test
@@ -72,13 +77,16 @@ public class StandardFieldTest extends TestBase {
 
         assertNotPredicate(condition, new User().setAge(24));
 
-        assertMongo(condition, "{ \"age\" : 23}");
+        assertMongo(condition, "{\"age\": 23}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"age\" : 23\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"age\" : {\n" +
+            "      \"value\" : 23,\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -91,13 +99,16 @@ public class StandardFieldTest extends TestBase {
 
         assertNotPredicate(condition, new User().setEnabled(false));
 
-        assertMongo(condition, "{ \"enabled\" : true}");
+        assertMongo(condition, "{\"enabled\": true}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"enabled\" : true\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"enabled\" : {\n" +
+            "      \"value\" : true,\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 

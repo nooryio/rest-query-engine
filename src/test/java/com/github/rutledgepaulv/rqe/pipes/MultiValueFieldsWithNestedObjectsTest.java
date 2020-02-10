@@ -30,13 +30,16 @@ public class MultiValueFieldsWithNestedObjectsTest extends TestBase {
 
         Condition<GeneralQueryBuilder> condition = pipeline.apply("comments.comment=='This is my first comment'", User.class);
 
-        assertMongo(condition, "{ \"comments.comment\" : \"This is my first comment\"}");
+        assertMongo(condition, "{\"comments.comment\": \"This is my first comment\"}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"comments.comment\" : \"This is my first comment\"\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"comments.comment\" : {\n" +
+            "      \"value\" : \"This is my first comment\",\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -68,7 +71,7 @@ public class MultiValueFieldsWithNestedObjectsTest extends TestBase {
 
         Condition<GeneralQueryBuilder> condition = pipeline.apply("comments=q=\"comment=='This is my first comment';timestamp=ex=true\"", User.class);
 
-        assertMongo(condition, "{ \"comments\" : { \"$elemMatch\" : { \"$and\" : [ { \"comment\" : \"This is my first comment\"} , { \"timestamp\" : { \"$exists\" : true}}]}}}");
+        assertMongo(condition, "{\"comments\": \"{\\\"$elemMatch\\\": \\\"{\\\\\\\"$and\\\\\\\": [{\\\\\\\"comment\\\\\\\": \\\\\\\"This is my first comment\\\\\\\"}, {\\\\\\\"timestamp\\\\\\\": {\\\\\\\"$exists\\\\\\\": true}}]}\\\"}\"}");
 
         assertElasticsearch(condition, "{\n" +
                 "  \"nested\" : {\n" +

@@ -11,6 +11,7 @@
 package com.github.rutledgepaulv.rqe.testsupport;
 
 import com.mongodb.DBObject;
+import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.Collection;
@@ -26,19 +27,28 @@ public class CriteriaSerializer implements Function<Criteria, String> {
 
     @Override
     public String apply(Criteria criteria) {
-        return applyInternal(criteria.getCriteriaObject()).toString();
+        return applyInternal(criteria.getCriteriaObject());
     }
 
-    private DBObject applyInternal(DBObject object) {
+    private String applyInternal(DBObject object) {
         object.keySet().stream().forEach(key ->
-                object.put(key, object.get(key) instanceof Enum<?> ?
-                        object.get(key).toString() : object.get(key) instanceof DBObject ?
-                        applyInternal((DBObject) object.get(key)) : object.get(key) instanceof Collection<?> ?
-                        applyList((Collection<?>)object.get(key)) : object.get(key)));
+            object.put(key, object.get(key) instanceof Enum<?> ?
+                object.get(key).toString() : object.get(key) instanceof DBObject ?
+                applyInternal((DBObject) object.get(key)) : object.get(key) instanceof Collection<?> ?
+                applyList((Collection<?>)object.get(key)) : object.get(key)));
 
-        return object;
+        return object.toString();
     }
 
+    private String applyInternal(Document object) {
+        object.keySet().stream().forEach(key ->
+            object.put(key, object.get(key) instanceof Enum<?> ?
+                object.get(key).toString() : object.get(key) instanceof Document ?
+                applyInternal((Document) object.get(key)) : object.get(key) instanceof Collection<?> ?
+                applyList((Collection<?>)object.get(key)) : object.get(key)));
+
+        return object.toJson();
+    }
 
     private List<?> applyList(Collection<?> items) {
         return items.stream().map(item -> {

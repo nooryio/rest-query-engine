@@ -62,10 +62,7 @@ public class DemoCustomConversionPipeline {
         String rsql = "compounds=q='name==\"Test\";metaData=q=\"(category==Acid;hidden==false)\"'";
 
         Criteria criteria = pipeline.apply(rsql, Spectra.class).query(new MongoVisitor());
-        assertEquals("{ \"compounds\" : { \"$elemMatch\" : { \"$and\" : " +
-                "[ { \"name\" : \"Test\"} , { \"metaData\" : { \"$elemMatch\" :" +
-                " { \"$and\" : [ { \"category\" : \"Acid\"} ," +
-                " { \"hidden\" : false}]}}}]}}}", criteria.getCriteriaObject().toString());
+        assertEquals("{\"compounds\": {\"$elemMatch\": {\"$and\": [{\"name\": \"Test\"}, {\"metaData\": {\"$elemMatch\": {\"$and\": [{\"category\": \"Acid\"}, {\"hidden\": false}]}}}]}}}", criteria.getCriteriaObject().toJson());
 
 
         QueryBuilder builder = pipeline.apply(rsql, Spectra.class)
@@ -115,30 +112,23 @@ public class DemoCustomConversionPipeline {
 
         rsql = "compounds.metaData=q='name==\"total exact mass\" and value=gt=411.31 and value=lt=411.4'";
         criteria = pipeline.apply(rsql, Spectra.class).query(new MongoVisitor());
-        assertEquals("{ \"compounds.metaData\" : { \"$elemMatch\" : { \"$and\" :" +
-                " [ { \"name\" : \"total exact mass\"} , { \"value\" : { \"$gt\" : 411.31}} ," +
-                " { \"value\" : { \"$lt\" : 411.4}}]}}}", criteria.getCriteriaObject().toString());
+        assertEquals("{\"compounds.metaData\": {\"$elemMatch\": {\"$and\": [{\"name\": \"total exact mass\"}, {\"value\": {\"$gt\": 411.31}}, {\"value\": {\"$lt\": 411.4}}]}}}", criteria.getCriteriaObject().toJson());
 
 
         rsql = "compounds.metaData=q='name==\"total exact mass\" and value=gt=1 and value=lt=5'";
         criteria = pipeline.apply(rsql, Spectra.class).query(new MongoVisitor());
-        assertEquals("{ \"compounds.metaData\" : { \"$elemMatch\" : { \"$and\" :" +
-                " [ { \"name\" : \"total exact mass\"} , { \"value\" : { \"$gt\" : 1}} ," +
-                " { \"value\" : { \"$lt\" : 5}}]}}}", criteria.getCriteriaObject().toString());
+        assertEquals("{\"compounds.metaData\": {\"$elemMatch\": {\"$and\": [{\"name\": \"total exact mass\"}, {\"value\": {\"$gt\": {\"$numberLong\": \"1\"}}}, {\"value\": {\"$lt\": {\"$numberLong\": \"5\"}}}]}}}", criteria.getCriteriaObject().toJson());
 
 
         rsql = "compounds.metaData=q='name==\"total exact mass\" and value==true'";
         criteria = pipeline.apply(rsql, Spectra.class).query(new MongoVisitor());
-        assertEquals("{ \"compounds.metaData\" : { \"$elemMatch\" : { \"$and\" :" +
-                " [ { \"name\" : \"total exact mass\"} , { \"value\" : true}]}}}",
-                criteria.getCriteriaObject().toString());
+        assertEquals("{\"compounds.metaData\": {\"$elemMatch\": {\"$and\": [{\"name\": \"total exact mass\"}, {\"value\": true}]}}}", criteria.getCriteriaObject().toJson());
 
 
         rsql = "compounds.metaData=q='name==\"total exact mass\" and value==false'";
         criteria = pipeline.apply(rsql, Spectra.class).query(new MongoVisitor());
-        assertEquals("{ \"compounds.metaData\" : { \"$elemMatch\" : { \"$and\" :" +
-                " [ { \"name\" : \"total exact mass\"} , { \"value\" : false}]}}}",
-                criteria.getCriteriaObject().toString());
+        assertEquals("{\"compounds.metaData\": {\"$elemMatch\": {\"$and\": [{\"name\": \"total exact mass\"}, {\"value\": false}]}}}",
+                criteria.getCriteriaObject().toJson());
 
 
     }

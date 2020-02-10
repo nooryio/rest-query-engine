@@ -37,13 +37,16 @@ public class NestedObjectTest extends TestBase {
         user.getAddress().setStreet("Something else");
         assertNotPredicate(condition, user);
 
-        assertMongo(condition, "{ \"address.street\" : \"1 Michigan Ave\"}");
+        assertMongo(condition, "{\"address.street\": \"1 Michigan Ave\"}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"address.street\" : \"1 Michigan Ave\"\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"address.street\" : {\n" +
+            "      \"value\" : \"1 Michigan Ave\",\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -60,13 +63,16 @@ public class NestedObjectTest extends TestBase {
         user.getAddress().setUnit(400);
         assertNotPredicate(condition, user);
 
-        assertMongo(condition, "{ \"address.unit\" : 100}");
+        assertMongo(condition, "{\"address.unit\": 100}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"address.unit\" : 100\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"address.unit\" : {\n" +
+            "      \"value\" : 100,\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -83,13 +89,16 @@ public class NestedObjectTest extends TestBase {
         user.getAddress().setHasCat(true);
         assertNotPredicate(condition, user);
 
-        assertMongo(condition, "{ \"address.hasCat\" : false}");
+        assertMongo(condition, "{\"address.hasCat\": false}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"address.hasCat\" : false\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"address.hasCat\" : {\n" +
+            "      \"value\" : false,\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -98,13 +107,16 @@ public class NestedObjectTest extends TestBase {
     public void enumPropertyOnNestedObject_mongodbAndElasticsearch() {
         Condition<GeneralQueryBuilder> condition = pipeline.apply("address.state==ILLINOIS", User.class);
 
-        assertMongo(condition, "{ \"address.state\" : \"ILLINOIS\"}");
+        assertMongo(condition, "{\"address.state\": \"ILLINOIS\"}");
 
         assertElasticsearch(condition, "{\n" +
-                "  \"term\" : {\n" +
-                "    \"address.state\" : \"ILLINOIS\"\n" +
-                "  }\n" +
-                "}");
+            "  \"term\" : {\n" +
+            "    \"address.state\" : {\n" +
+            "      \"value\" : \"ILLINOIS\",\n" +
+            "      \"boost\" : 1.0\n" +
+            "    }\n" +
+            "  }\n" +
+            "}");
     }
 
 

@@ -49,18 +49,29 @@ public class FieldCombinationsTest extends TestBase {
         assertMongo(parsed, "{ \"$and\" : [ { \"age\" : 23} , { \"firstName\" : \"Paul\"}]}");
 
         assertElasticsearch(parsed, "{\n" +
-                "  \"bool\" : {\n" +
-                "    \"must\" : [ {\n" +
-                "      \"term\" : {\n" +
-                "        \"age\" : 23\n" +
-                "      }\n" +
-                "    }, {\n" +
-                "      \"term\" : {\n" +
-                "        \"firstName\" : \"Paul\"\n" +
-                "      }\n" +
-                "    } ]\n" +
-                "  }\n" +
-                "}");
+            "  \"bool\" : {\n" +
+            "    \"must\" : [\n" +
+            "      {\n" +
+            "        \"term\" : {\n" +
+            "          \"age\" : {\n" +
+            "            \"value\" : 23,\n" +
+            "            \"boost\" : 1.0\n" +
+            "          }\n" +
+            "        }\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"term\" : {\n" +
+            "          \"firstName\" : {\n" +
+            "            \"value\" : \"Paul\",\n" +
+            "            \"boost\" : 1.0\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"adjust_pure_negative\" : true,\n" +
+            "    \"boost\" : 1.0\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -81,18 +92,29 @@ public class FieldCombinationsTest extends TestBase {
         assertMongo(parsed, "{ \"$or\" : [ { \"age\" : 23} , { \"firstName\" : \"Paul\"}]}");
 
         assertElasticsearch(parsed, "{\n" +
-                "  \"bool\" : {\n" +
-                "    \"should\" : [ {\n" +
-                "      \"term\" : {\n" +
-                "        \"age\" : 23\n" +
-                "      }\n" +
-                "    }, {\n" +
-                "      \"term\" : {\n" +
-                "        \"firstName\" : \"Paul\"\n" +
-                "      }\n" +
-                "    } ]\n" +
-                "  }\n" +
-                "}");
+            "  \"bool\" : {\n" +
+            "    \"should\" : [\n" +
+            "      {\n" +
+            "        \"term\" : {\n" +
+            "          \"age\" : {\n" +
+            "            \"value\" : 23,\n" +
+            "            \"boost\" : 1.0\n" +
+            "          }\n" +
+            "        }\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"term\" : {\n" +
+            "          \"firstName\" : {\n" +
+            "            \"value\" : \"Paul\",\n" +
+            "            \"boost\" : 1.0\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"adjust_pure_negative\" : true,\n" +
+            "    \"boost\" : 1.0\n" +
+            "  }\n" +
+            "}");
 
     }
 
@@ -168,10 +190,7 @@ public class FieldCombinationsTest extends TestBase {
 
         assertEquals(rsql, parsed.query(new RSQLVisitor()));
 
-        assertMongo(parsed, "{ \"$and\" : [ { \"$and\" : [ { \"age\" : 23} , " +
-                "{ \"firstName\" : \"Paul\"}]} , { \"comments\" : { \"$elemMatch\" :" +
-                " { \"$and\" : [ { \"comment\" : \"Test\"} , { \"timestamp\" : " +
-                "{ \"$date\" : \"1970-01-01T00:00:00.000Z\"}}]}}}]}");
+        assertMongo(parsed, "{\"$and\": [{\"$and\": [{\"age\": 23}, {\"firstName\": \"Paul\"}]}, {\"comments\": {\"$elemMatch\": {\"$and\": [{\"comment\": \"Test\"}, {\"timestamp\": {\"$date\": 0}}]}}}]}");
 
         assertElasticsearch(root, "{\n" +
                 "  \"bool\" : {\n" +
